@@ -7,6 +7,9 @@ public class Optionscript : MonoBehaviour {
     public GameObject ScreenSizeSelector;
     public GameObject QualitySelector;
     public GameObject KeyControl;
+    public GameObject MuteControl;
+    public GameObject VolumeSelector;
+    public GameObject PlayerCamera;
     public GameObject Warning;
     enum ScreenSize
     {
@@ -33,6 +36,8 @@ public class Optionscript : MonoBehaviour {
     ScreenSize CurrentScreenSize;
     Quality CurrentQuality;
     int[] KeyboardLayout;
+    bool CurrentInputMute;
+    int CurrentVolume;
     bool checkforkeyinput;
     int whichkeytocheckfor;
 
@@ -40,8 +45,9 @@ public class Optionscript : MonoBehaviour {
 	void Start () {
 		
         CurrentScreenSize = (ScreenSize)PlayerPrefs.GetInt("screensize");
-        CurrentQuality = (Quality)PlayerPrefs.GetInt("quality");
         ScreenSizeSelector.GetComponent<Dropdown>().value = (int)CurrentScreenSize;
+
+        CurrentQuality = (Quality)PlayerPrefs.GetInt("quality");
         QualitySelector.GetComponent<Dropdown>().value = (int)CurrentQuality;
         KeyboardLayout = new int[(int)KeyboardControls.key_total]
             {
@@ -50,20 +56,32 @@ public class Optionscript : MonoBehaviour {
                 PlayerPrefs.GetInt("key_left"),
                 PlayerPrefs.GetInt("key_right")
             };
-        //for (int i = 0; i < KeyboardLayout.Length; ++i)
-        //{
-
-        //}
         KeyControl.transform.GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = ((KeyCode)KeyboardLayout[0]).ToString();
         KeyControl.transform.GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text = ((KeyCode)KeyboardLayout[1]).ToString();
         KeyControl.transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = ((KeyCode)KeyboardLayout[2]).ToString();
         KeyControl.transform.GetChild(1).GetChild(3).GetChild(0).GetComponent<Text>().text = ((KeyCode)KeyboardLayout[3]).ToString();
 
-        Resolution[] resolution = Screen.resolutions;
-        foreach(Resolution res in resolution)
+        if (PlayerPrefs.GetInt("mute") == 0)
         {
-            Debug.Log(res.width + "x" + res.height);
+            CurrentInputMute = false;
         }
+        else
+        {
+            CurrentInputMute = true;
+        }
+        MuteControl.GetComponent<Toggle>().isOn = CurrentInputMute;
+        PlayerCamera.GetComponent<AudioSource>().mute = CurrentInputMute;
+
+        CurrentVolume = PlayerPrefs.GetInt("volume");
+        VolumeSelector.GetComponent<Slider>().value = CurrentVolume;
+        PlayerCamera.GetComponent<AudioSource>().volume = CurrentVolume;
+        VolumeSelector.transform.GetChild(4).GetComponent<Text>().text = CurrentVolume.ToString();
+
+        //Resolution[] resolution = Screen.resolutions;
+        //foreach(Resolution res in resolution)
+        //{
+        //    Debug.Log(res.width + "x" + res.height);
+        //}
 	}
 	
 	// Update is called once per frame
@@ -100,23 +118,23 @@ public class Optionscript : MonoBehaviour {
         switch ((int)CurrentScreenSize)
         {
             case 0: //1024x768
-                if (UnityEngine.Screen.width != 1024 || UnityEngine.Screen.height != 768)
+                if (Screen.width != 1024 || Screen.height != 768)
                 {
-                    UnityEngine.Screen.SetResolution(1024, 768, false);
+                    Screen.SetResolution(1024, 768, false);
                     Debug.Log("setting to 1024x768");
                 }
                 break;
             case 1: //1280x800
-                if (UnityEngine.Screen.width != 1280 || UnityEngine.Screen.height != 800)
+                if (Screen.width != 1280 || Screen.height != 800)
                 {
-                    UnityEngine.Screen.SetResolution(1280, 800, false);
+                    Screen.SetResolution(1280, 800, false);
                     Debug.Log("setting to 1280x800");
                 }
                 break;
             case 2: //1280x960
-                if (UnityEngine.Screen.width != 1280 || UnityEngine.Screen.height != 960)
+                if (Screen.width != 1280 || Screen.height != 960)
                 {
-                    UnityEngine.Screen.SetResolution(1280, 960, false);
+                    Screen.SetResolution(1280, 960, false);
                     Debug.Log("setting to 1280x960");
                 }
                 break;
@@ -132,6 +150,23 @@ public class Optionscript : MonoBehaviour {
         // change quality code here
     }
 
+    public void OnValueChangedMute()
+    {
+        CurrentInputMute = MuteControl.GetComponent<Toggle>().isOn;
+        PlayerCamera.GetComponent<AudioSource>().mute = CurrentInputMute;
+        if (!CurrentInputMute)
+        {
+            PlayerCamera.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    public void OnValueChangedVolume()
+    {
+        CurrentVolume = (int)(VolumeSelector.GetComponent<Slider>().value);
+        PlayerCamera.GetComponent<AudioSource>().volume = CurrentVolume / 100;
+        VolumeSelector.transform.GetChild(4).GetComponent<Text>().text = CurrentVolume.ToString();
+    }
+
     public void SaveandExit()
     {
         PlayerPrefs.SetInt("screensize", (int)CurrentScreenSize);
@@ -140,6 +175,15 @@ public class Optionscript : MonoBehaviour {
         PlayerPrefs.SetInt("key_down", KeyboardLayout[1]);
         PlayerPrefs.SetInt("key_left", KeyboardLayout[2]);
         PlayerPrefs.SetInt("key_right", KeyboardLayout[3]);
+        if(!CurrentInputMute)
+        {
+            PlayerPrefs.SetInt("mute", 0);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("mute", 1);
+        }
+        PlayerPrefs.SetInt("volume", CurrentVolume);
         Exit();
     }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
     public static GameController instance;
+    public Transform PlayerCamera;
     int Gamemode;
     int MiniGameChoosen;
 	// Use this for initialization
@@ -17,6 +18,7 @@ public class GameController : MonoBehaviour {
             instance = this;
         }
 
+        PlayerCamera = GameObject.FindGameObjectWithTag("MainCamera").transform;
         // init values
         Gamemode = 0;
 
@@ -45,12 +47,63 @@ public class GameController : MonoBehaviour {
         {
             PlayerPrefs.SetInt("key_right", 100); // d
         }
+        if (!PlayerPrefs.HasKey("mute"))
+        {
+            PlayerPrefs.SetInt("mute", 0);
+        }
+        if (!PlayerPrefs.HasKey("volume"))
+        {
+            PlayerPrefs.SetInt("volume", 100);
+        }
+
+        //loads the value into the game
+        LoadStartingData();
     }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    void LoadStartingData()
+    {
+        switch (PlayerPrefs.GetInt("screensize"))
+        {
+            case 0: //1024x768
+                if (Screen.width != 1024 || Screen.height != 768)
+                {
+                    Screen.SetResolution(1024, 768, false);
+                    Debug.Log("setting to 1024x768");
+                }
+                break;
+            case 1: //1280x800
+                if (Screen.width != 1280 || Screen.height != 800)
+                {
+                    Screen.SetResolution(1280, 800, false);
+                    Debug.Log("setting to 1280x800");
+                }
+                break;
+            case 2: //1280x960
+                if (Screen.width != 1280 || Screen.height != 960)
+                {
+                    Screen.SetResolution(1280, 960, false);
+                    Debug.Log("setting to 1280x960");
+                }
+                break;
+            default:
+                Debug.LogWarning("why am i here?");
+                break;
+        }
+
+        // Quality Load here
+        
+        if (PlayerPrefs.GetInt("mute") == 1)
+        {
+            PlayerCamera.GetComponent<AudioSource>().mute = true;
+        }
+
+        PlayerCamera.GetComponent<AudioSource>().volume = PlayerPrefs.GetInt("volume") / 100;
+    }
 
     public void SetGameMode(int mode)
     {
