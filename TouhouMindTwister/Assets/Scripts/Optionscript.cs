@@ -37,7 +37,7 @@ public class Optionscript : MonoBehaviour {
     Quality CurrentQuality;
     int[] KeyboardLayout;
     bool CurrentInputMute;
-    int CurrentVolume;
+    float CurrentVolume;
     bool checkforkeyinput;
     int whichkeytocheckfor;
 
@@ -162,8 +162,9 @@ public class Optionscript : MonoBehaviour {
 
     public void OnValueChangedVolume()
     {
-        CurrentVolume = (int)(VolumeSelector.GetComponent<Slider>().value);
-        PlayerCamera.GetComponent<AudioSource>().volume = CurrentVolume / 100;
+        CurrentVolume = (VolumeSelector.GetComponent<Slider>().value);
+        Debug.Log(CurrentVolume.ToString());
+        PlayerCamera.GetComponent<AudioSource>().volume = (CurrentVolume/100);
         VolumeSelector.transform.GetChild(4).GetComponent<Text>().text = CurrentVolume.ToString();
     }
 
@@ -183,7 +184,7 @@ public class Optionscript : MonoBehaviour {
         {
             PlayerPrefs.SetInt("mute", 1);
         }
-        PlayerPrefs.SetInt("volume", CurrentVolume);
+        PlayerPrefs.SetInt("volume", (int)(CurrentVolume*100));
         Exit();
     }
 
@@ -199,6 +200,10 @@ public class Optionscript : MonoBehaviour {
 
     public void Exit()
     {
+        if(Warning.active == true)
+        {
+            Warning.SetActive(false);
+        }
         this.gameObject.SetActive(false);
     }
 }
