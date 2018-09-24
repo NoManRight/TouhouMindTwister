@@ -200,7 +200,7 @@ public class Optionscript : MonoBehaviour {
 
     public void Exit()
     {
-        if(Warning.active == true)
+        if(Warning.activeSelf == true)
         {
             Warning.SetActive(false);
         }
