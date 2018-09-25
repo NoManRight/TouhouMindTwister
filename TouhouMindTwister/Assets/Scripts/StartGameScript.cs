@@ -48,12 +48,14 @@ public class StartGameScript : MonoBehaviour {
     public void PressedContinous()
     {
         GameController.instance.SetGameMode(1);
+        int rannum = Random.Range(0, GameController.instance.Levels.Length);
+        SceneManager.LoadScene(rannum + 1);
         //random minigame here
     }
 
     public void PressedChallenge()
     {
         GameController.instance.SetGameMode(2);
-        //random minigame here
+        //level select here
     }
 }
