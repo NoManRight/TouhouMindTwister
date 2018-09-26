@@ -17,17 +17,18 @@ public class NotNot : MonoBehaviour
         Not_Right,
         Direction_Total,
     }
-    GameObject Cube;
+    GameObject cubecontroller;
+    GameObject[] Cubes;
     GameObject txt_dir;
     GameObject txt_score;
     GameObject txt_clear;
     GameObject scrollbar_gametimer;
     GameObject txt_starttimer;
     Quaternion CubeRotation;
-    public float timer, timerbeforestart, rolltimer;
-    public bool start, keyeventon, isrolling;
+    public float timer, timerbeforestart, movetimer;
+    public bool start, keyeventon, ismoving, regreted;
     public int timesplayed, score, rannum;
-    public Direction answer;
+    public Direction answer, playeranswer;
     KeyCode kanswer;
 
     public float speed = 0;
@@ -35,8 +36,12 @@ public class NotNot : MonoBehaviour
     void Start()
     {
         //Version 1
-        Cube = transform.GetChild(0).gameObject;
-        CubeRotation = Cube.transform.rotation;
+        cubecontroller = this.transform.GetChild(0).gameObject;
+        Cubes = new GameObject[cubecontroller.transform.childCount];
+        for (int i = 0; i < cubecontroller.transform.childCount; ++i)
+        {
+            Cubes[i] = cubecontroller.transform.GetChild(i).gameObject;
+        }
         txt_dir = transform.GetChild(1).GetChild(0).gameObject;
         txt_score = transform.GetChild(1).GetChild(1).gameObject;
         txt_clear = transform.GetChild(1).GetChild(2).gameObject;
@@ -47,7 +52,8 @@ public class NotNot : MonoBehaviour
         txt_starttimer.transform.GetComponent<Text>().text = ((int)timerbeforestart).ToString();
         start = true;
         keyeventon = false;
-        isrolling = false;
+        ismoving = false;
+        regreted = false;
     }
 
     // Update is called once per frame
@@ -124,6 +130,7 @@ public class NotNot : MonoBehaviour
             }
             else
             {
+                // need to do a backtrack
                 if (keyeventon)
                 {
                     timer -= Time.deltaTime;
@@ -134,67 +141,142 @@ public class NotNot : MonoBehaviour
                         txt_dir.GetComponent<Text>().text = "Missed";
                         if (rannum > 3)
                         {
-                            randomlychoosendirection();
+                            Randomlychoosendirection();
                         }
                         keyeventon = false;
-                        isrolling = true;
+                        ismoving = true;
                         timesplayed++;
                         scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
                         scrollbar_gametimer.SetActive(false);
                     }
                 }
-                if(isrolling)
+                if(ismoving && !regreted)
                 {
-                    if(rolltimer < 90)
+                    if(movetimer < 12)
                     {
-                        if(answer == Direction.Up)
+                        if(playeranswer == Direction.Up)
                         {
-                            Cube.transform.Rotate(Vector3.left * Time.deltaTime * speed, Space.World);
+                            Moveupdown(true);
                         }
-                        else if (answer == Direction.Down)
+                        else if (playeranswer == Direction.Down)
                         {
-                            Cube.transform.Rotate(Vector3.right * Time.deltaTime * speed, Space.World); // moved left
+                            Moveupdown(false);
                         }
-                        else if (answer == Direction.Left)
+                        else if (playeranswer == Direction.Left)
                         {
-                            Cube.transform.Rotate(Vector3.down * Time.deltaTime * speed, Space.World); //moved up
+                            Moveleftright(false);
                         }
-                        else if (answer == Direction.Right)
+                        else if (playeranswer == Direction.Right)
                         {
-                            Cube.transform.Rotate(Vector3.up * Time.deltaTime * speed, Space.World); //moved down
+                            Moveleftright(true);
                         }
                         else
                         {
-                            Debug.LogWarning("Missing Roll Direction");
+                            Debug.LogWarning("Missing move Direction");
                             return;
                         }
-                        rolltimer += Time.deltaTime * speed;
+                        movetimer += Time.deltaTime * speed;
                     }
                     else
                     {
-                        Cube.transform.rotation = CubeRotation;
                         if (answer == Direction.Up)
                         {
-                            Cube.transform.Rotate(Vector3.left * 90, Space.World);
+                            GameObject temp = Cubes[0];
+                            Cubes[0] = Cubes[2];
+                            Cubes[2] = Cubes[4];
+                            Cubes[4] = temp;
                         }
                         else if (answer == Direction.Down)
                         {
-                            Cube.transform.Rotate(Vector3.right * 90, Space.World);
+                            GameObject temp = Cubes[4];
+                            Cubes[4] = Cubes[2];
+                            Cubes[2] = Cubes[0];
+                            Cubes[0] = temp;
                         }
                         else if (answer == Direction.Left)
                         {
-                            Cube.transform.Rotate(Vector3.down * 90, Space.World);
+                            GameObject temp = Cubes[1];
+                            Cubes[1] = Cubes[2];
+                            Cubes[2] = Cubes[3];
+                            Cubes[3] = temp;
                         }
                         else if (answer == Direction.Right)
                         {
-                            Cube.transform.Rotate(Vector3.up * 90, Space.World);
+                            GameObject temp = Cubes[3];
+                            Cubes[3] = Cubes[2];
+                            Cubes[2] = Cubes[1];
+                            Cubes[1] = temp;
                         }
-                        CubeRotation = Cube.transform.rotation;
+                        Reset();
                         start = true;
-                        rolltimer = 0;
-                        isrolling = false;
+                        movetimer = 0;
+                        ismoving = false;
                     }
                 }
+                //else if (ismoving && regreted)
+                //{
+                //    if (movetimer > 0)
+                //    {
+                //        if (playeranswer == Direction.Up)
+                //        {
+                //            Moveupdown(true);
+                //        }
+                //        else if (playeranswer == Direction.Down)
+                //        {
+                //            Moveupdown(false);
+                //        }
+                //        else if (playeranswer == Direction.Left)
+                //        {
+                //            Moveleftright(false);
+                //        }
+                //        else if (playeranswer == Direction.Right)
+                //        {
+                //            Moveleftright(true);
+                //        }
+                //        else
+                //        {
+                //            Debug.LogWarning("Missing move Direction");
+                //            return;
+                //        }
+                //        movetimer += Time.deltaTime * speed;
+                //    }
+                //    else
+                //    {
+                //        Constrain();
+                //        if (answer == Direction.Up)
+                //        {
+                //            GameObject temp = Cubes[0];
+                //            Cubes[0] = Cubes[2];
+                //            Cubes[2] = Cubes[4];
+                //            Cubes[4] = temp;
+                //        }
+                //        else if (answer == Direction.Down)
+                //        {
+                //            GameObject temp = Cubes[4];
+                //            Cubes[4] = Cubes[2];
+                //            Cubes[2] = Cubes[0];
+                //            Cubes[0] = temp;
+                //        }
+                //        else if (answer == Direction.Left)
+                //        {
+                //            GameObject temp = Cubes[1];
+                //            Cubes[1] = Cubes[2];
+                //            Cubes[2] = Cubes[3];
+                //            Cubes[3] = temp;
+                //        }
+                //        else if (answer == Direction.Right)
+                //        {
+                //            GameObject temp = Cubes[3];
+                //            Cubes[3] = Cubes[2];
+                //            Cubes[2] = Cubes[1];
+                //            Cubes[1] = temp;
+                //        }
+                //        start = true;
+                //        movetimer = 0;
+                //        ismoving = false;
+                //    }
+
+                //}
             }
         }
         txt_score.transform.GetComponent<Text>().text = "Score: " + score.ToString();
@@ -205,54 +287,62 @@ public class NotNot : MonoBehaviour
     {
         if (keyeventon)
         {
-            if (Input.anyKeyDown && Event.current.type == EventType.KeyDown)
+            if (!ismoving)
             {
-                if (keycheck(Event.current.keyCode))
+                if (Input.anyKeyDown && Event.current.type == EventType.KeyDown)
                 {
-                    Debug.Log(Event.current.keyCode);
-                    if (rannum < 4)
+                    if (Keycheck(Event.current.keyCode))
                     {
-                        if (Event.current.keyCode == kanswer)
+                        Debug.Log(Event.current.keyCode);
+                        if (rannum < 4)
                         {
-                            // you got it right, next
-                            score++;
-                            // maybe add timer to score?
-                            txt_dir.GetComponent<Text>().text = "Correct";
+                            if (Event.current.keyCode == kanswer)
+                            {
+                                // you got it right, next
+                                score++;
+                                // maybe add timer to score?
+                                txt_dir.GetComponent<Text>().text = "Correct";
+                            }
+                            else
+                            {
+                                // you gt it wrong, next
+                                txt_dir.GetComponent<Text>().text = "Wrong";
+                            }
                         }
                         else
                         {
-                            // you got it wrong, next
-                            txt_dir.GetComponent<Text>().text = "Wrong";
+                            if(Event.current.keyCode != kanswer)
+                            {
+                                // you got it right, next
+                                score++;
+                                // maybe add timer to score?
+                                txt_dir.GetComponent<Text>().text = "Correct";
+                                Playerchoosendirection(Event.current.keyCode);
+                            }
+                            else
+                            {
+                                // you gt it wrong, next
+                                txt_dir.GetComponent<Text>().text = "Wrong";
+                                Randomlychoosendirection();
+                            }
                         }
+                        Playerchoosendirection(Event.current.keyCode);
+                        timesplayed++;
+                        keyeventon = false;
+                        ismoving = true;
+                        scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
+                        scrollbar_gametimer.SetActive(false);
                     }
-                    else
-                    {
-                        if (Event.current.keyCode != kanswer)
-                        {
-                            // you got it right, next
-                            score++;
-                            // maybe add timer to score?
-                            txt_dir.GetComponent<Text>().text = "Correct";
-                            playerchoosendirection(Event.current.keyCode);
-                        }
-                        else
-                        {
-                            // you got it wrong, next
-                            txt_dir.GetComponent<Text>().text = "Wrong";
-                            randomlychoosendirection();
-                        }
-                    }
-                    timesplayed++;
-                    isrolling = true;
-                    keyeventon = false;
-                    scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
-                    scrollbar_gametimer.SetActive(false);
                 }
             }
+            //if (ismoving && !regreted)
+            //{
+
+            //}
         }
     }
 
-    private bool keycheck(KeyCode input)
+    private bool Keycheck(KeyCode input)
     {
         if(input == (KeyCode)PlayerPrefs.GetInt("key_up") || 
             input == (KeyCode)PlayerPrefs.GetInt("key_down") || 
@@ -264,7 +354,7 @@ public class NotNot : MonoBehaviour
         return false;
     }
 
-    private void playerchoosendirection(KeyCode input)
+    private void Playerchoosendirection(KeyCode input)
     {
         Direction temp = Direction.Direction_Total;
         if (input == (KeyCode)PlayerPrefs.GetInt("key_up"))
@@ -283,10 +373,10 @@ public class NotNot : MonoBehaviour
         {
             temp = Direction.Right;
         }
-        answer = temp;
+        playeranswer = temp;
     }
 
-    private void randomlychoosendirection()
+    private void Randomlychoosendirection()
     {
         rannum -= 4;
         while ((rannum + 4) == (int)answer)
@@ -296,5 +386,85 @@ public class NotNot : MonoBehaviour
         }
         answer = (Direction)rannum;
         Debug.Log("rannum = " + rannum.ToString());
+    }
+
+    private void Moveupdown(bool input)
+    {
+        if (input)
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i % 2 == 0)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x, Cubes[i].transform.localPosition.y + (speed * Time.deltaTime), Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i % 2 == 0)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x, Cubes[i].transform.localPosition.y - (speed * Time.deltaTime), Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+    }
+
+    private void Moveleftright(bool input)
+    {
+        if (input)
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i == 1 || i == 2 || i == 3)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x + (speed * Time.deltaTime), Cubes[i].transform.localPosition.y, Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i == 1 || i == 2 || i == 3)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x - (speed * Time.deltaTime), Cubes[i].transform.localPosition.y, Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+    }
+
+    private void Constrain()
+    {
+        for (int i = 0; i < Cubes.Length; ++i)
+        {
+            if (Cubes[i].transform.localPosition.x >= 23)
+            {
+                Cubes[i].transform.localPosition = new Vector3(-12, Cubes[i].transform.localPosition.y, Cubes[i].transform.localPosition.z);
+            }
+            else if (Cubes[i].transform.localPosition.x <= -23)
+            {
+                Cubes[i].transform.localPosition = new Vector3(12, Cubes[i].transform.localPosition.y, Cubes[i].transform.localPosition.z);
+            }
+            if (Cubes[i].transform.localPosition.y >= 23)
+            {
+                Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x, -12, Cubes[i].transform.localPosition.z);
+            }
+            else if (Cubes[i].transform.localPosition.y <= -23)
+            {
+                Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x, 12, Cubes[i].transform.localPosition.z);
+            }
+        }
+    }
+
+    private void Reset()
+    {
+        Cubes[0].transform.localPosition = new Vector3(0, 12, 0);
+        Cubes[1].transform.localPosition = new Vector3(-12, 0, 0);
+        Cubes[2].transform.localPosition = new Vector3(0, 0, 0);
+        Cubes[3].transform.localPosition = new Vector3(12, 0, 0);
+        Cubes[4].transform.localPosition = new Vector3(0, -12, 0);
     }
 }
