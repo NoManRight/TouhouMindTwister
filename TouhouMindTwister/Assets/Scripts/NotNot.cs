@@ -24,6 +24,8 @@ public class NotNot : MonoBehaviour
     GameObject txt_clear;
     GameObject scrollbar_gametimer;
     GameObject txt_starttimer;
+    GameObject Monster;
+    GameObject Player;
     Quaternion CubeRotation;
     public float timer, timerbeforestart, movetimer;
     public bool start, keyeventon, ismoving, regreted;
@@ -42,6 +44,7 @@ public class NotNot : MonoBehaviour
         {
             Cubes[i] = cubecontroller.transform.GetChild(i).gameObject;
         }
+        Monster = Cubes[2].transform.GetChild(6).gameObject;
         txt_dir = transform.GetChild(1).GetChild(0).gameObject;
         txt_score = transform.GetChild(1).GetChild(1).gameObject;
         txt_clear = transform.GetChild(1).GetChild(2).gameObject;
@@ -152,6 +155,7 @@ public class NotNot : MonoBehaviour
                 }
                 if(ismoving && !regreted)
                 {
+                    //in the mids of changing this
                     if(movetimer < 12)
                     {
                         if(playeranswer == Direction.Up)
@@ -179,28 +183,28 @@ public class NotNot : MonoBehaviour
                     }
                     else
                     {
-                        if (answer == Direction.Up)
+                        if (playeranswer == Direction.Up)
                         {
                             GameObject temp = Cubes[0];
                             Cubes[0] = Cubes[2];
                             Cubes[2] = Cubes[4];
                             Cubes[4] = temp;
                         }
-                        else if (answer == Direction.Down)
+                        else if (playeranswer == Direction.Down)
                         {
                             GameObject temp = Cubes[4];
                             Cubes[4] = Cubes[2];
                             Cubes[2] = Cubes[0];
                             Cubes[0] = temp;
                         }
-                        else if (answer == Direction.Left)
+                        else if (playeranswer == Direction.Left)
                         {
                             GameObject temp = Cubes[1];
                             Cubes[1] = Cubes[2];
                             Cubes[2] = Cubes[3];
                             Cubes[3] = temp;
                         }
-                        else if (answer == Direction.Right)
+                        else if (playeranswer == Direction.Right)
                         {
                             GameObject temp = Cubes[3];
                             Cubes[3] = Cubes[2];
@@ -293,6 +297,7 @@ public class NotNot : MonoBehaviour
                 {
                     if (Keycheck(Event.current.keyCode))
                     {
+                        // and changing this too
                         Debug.Log(Event.current.keyCode);
                         if (rannum < 4)
                         {
@@ -307,6 +312,7 @@ public class NotNot : MonoBehaviour
                             {
                                 // you gt it wrong, next
                                 txt_dir.GetComponent<Text>().text = "Wrong";
+                                SpawnGameOverMonster(Event.current.keyCode);
                             }
                         }
                         else
@@ -317,13 +323,14 @@ public class NotNot : MonoBehaviour
                                 score++;
                                 // maybe add timer to score?
                                 txt_dir.GetComponent<Text>().text = "Correct";
-                                Playerchoosendirection(Event.current.keyCode);
+                                //Playerchoosendirection(Event.current.keyCode);
                             }
                             else
                             {
                                 // you gt it wrong, next
                                 txt_dir.GetComponent<Text>().text = "Wrong";
-                                Randomlychoosendirection();
+                                SpawnGameOverMonster(Event.current.keyCode);
+                                //Randomlychoosendirection();
                             }
                         }
                         Playerchoosendirection(Event.current.keyCode);
@@ -354,7 +361,7 @@ public class NotNot : MonoBehaviour
         return false;
     }
 
-    private void Playerchoosendirection(KeyCode input)
+    private void Playerchoosendirection(KeyCode input) //seems to have error with monster movements
     {
         Direction temp = Direction.Direction_Total;
         if (input == (KeyCode)PlayerPrefs.GetInt("key_up"))
@@ -466,5 +473,32 @@ public class NotNot : MonoBehaviour
         Cubes[2].transform.localPosition = new Vector3(0, 0, 0);
         Cubes[3].transform.localPosition = new Vector3(12, 0, 0);
         Cubes[4].transform.localPosition = new Vector3(0, -12, 0);
+    }
+
+    private void SpawnGameOverMonster(KeyCode Direction)
+    {
+         if (Direction == (KeyCode)PlayerPrefs.GetInt("key_up"))
+        {
+            Monster.transform.SetParent(Cubes[0].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, 0, -0.25f);
+            Monster.transform.Rotate(new Vector3(180, 0, 0));
+        }
+        else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_down"))
+        {
+            Monster.transform.SetParent(Cubes[4].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, 0, 0.25f);
+        }
+        if (Direction == (KeyCode)PlayerPrefs.GetInt("key_left"))
+        {
+            Monster.transform.SetParent(Cubes[0].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, 0.25f, 0);
+            Monster.transform.Rotate(new Vector3(90, 0, 0));
+        }
+        if (Direction == (KeyCode)PlayerPrefs.GetInt("key_up"))
+        {
+            Monster.transform.SetParent(Cubes[0].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, -0.25f, 0);
+            Monster.transform.Rotate(new Vector3(-90, 0, 0));
+        }
     }
 }
