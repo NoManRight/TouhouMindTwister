@@ -17,6 +17,10 @@ public class NotNot : MonoBehaviour
         Not_Right,
         Direction_Total,
     }
+
+    public Dictionary<char, string> Map;
+
+
     GameObject cubecontroller;
     GameObject[] Cubes;
     GameObject txt_dir;
@@ -160,19 +164,19 @@ public class NotNot : MonoBehaviour
                     {
                         if(playeranswer == Direction.Up)
                         {
-                            Moveupdown(true);
+                            Moveupdown(false);
                         }
                         else if (playeranswer == Direction.Down)
                         {
-                            Moveupdown(false);
+                            Moveupdown(true);
                         }
                         else if (playeranswer == Direction.Left)
                         {
-                            Moveleftright(false);
+                            Moveleftright(true);
                         }
                         else if (playeranswer == Direction.Right)
                         {
-                            Moveleftright(true);
+                            Moveleftright(false);
                         }
                         else
                         {
@@ -185,31 +189,31 @@ public class NotNot : MonoBehaviour
                     {
                         if (playeranswer == Direction.Up)
                         {
-                            GameObject temp = Cubes[0];
-                            Cubes[0] = Cubes[2];
-                            Cubes[2] = Cubes[4];
-                            Cubes[4] = temp;
-                        }
-                        else if (playeranswer == Direction.Down)
-                        {
                             GameObject temp = Cubes[4];
                             Cubes[4] = Cubes[2];
                             Cubes[2] = Cubes[0];
                             Cubes[0] = temp;
                         }
-                        else if (playeranswer == Direction.Left)
+                        else if (playeranswer == Direction.Down)
                         {
-                            GameObject temp = Cubes[1];
-                            Cubes[1] = Cubes[2];
-                            Cubes[2] = Cubes[3];
-                            Cubes[3] = temp;
+                            GameObject temp = Cubes[0];
+                            Cubes[0] = Cubes[2];
+                            Cubes[2] = Cubes[4];
+                            Cubes[4] = temp;
                         }
-                        else if (playeranswer == Direction.Right)
+                        else if (playeranswer == Direction.Left)
                         {
                             GameObject temp = Cubes[3];
                             Cubes[3] = Cubes[2];
                             Cubes[2] = Cubes[1];
                             Cubes[1] = temp;
+                        }
+                        else if (playeranswer == Direction.Right)
+                        {
+                            GameObject temp = Cubes[1];
+                            Cubes[1] = Cubes[2];
+                            Cubes[2] = Cubes[3];
+                            Cubes[3] = temp;
                         }
                         Reset();
                         start = true;
@@ -479,26 +483,29 @@ public class NotNot : MonoBehaviour
     {
          if (Direction == (KeyCode)PlayerPrefs.GetInt("key_up"))
         {
+
             Monster.transform.SetParent(Cubes[0].transform);
             Monster.transform.localPosition = new Vector3(-0.5f, 0, -0.25f);
-            Monster.transform.Rotate(new Vector3(180, 0, 0));
+            Monster.transform.Rotate(new Vector3(0, 180, 0));
         }
         else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_down"))
         {
             Monster.transform.SetParent(Cubes[4].transform);
             Monster.transform.localPosition = new Vector3(-0.5f, 0, 0.25f);
         }
-        if (Direction == (KeyCode)PlayerPrefs.GetInt("key_left"))
+        else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_left"))
         {
-            Monster.transform.SetParent(Cubes[0].transform);
+            Monster.transform.SetParent(Cubes[1].transform);
             Monster.transform.localPosition = new Vector3(-0.5f, 0.25f, 0);
-            Monster.transform.Rotate(new Vector3(90, 0, 0));
+            Monster.transform.Rotate(new Vector3(0, 90, 0));
         }
-        if (Direction == (KeyCode)PlayerPrefs.GetInt("key_up"))
+        else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_right"))
         {
-            Monster.transform.SetParent(Cubes[0].transform);
+            Monster.transform.SetParent(Cubes[3].transform);
             Monster.transform.localPosition = new Vector3(-0.5f, -0.25f, 0);
-            Monster.transform.Rotate(new Vector3(-90, 0, 0));
+            Monster.transform.Rotate(new Vector3(0, -90, 0));
         }
+        Monster.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        Monster.SetActive(true);
     }
 }
