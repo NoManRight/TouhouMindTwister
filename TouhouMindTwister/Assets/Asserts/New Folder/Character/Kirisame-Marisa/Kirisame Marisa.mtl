@@ -1,0 +1,278 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 6.3 x64 6.3.5.8307
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl Anime_Skin_008
+Ka 0 0 0
+Kd 0.315584 0.271714 0.193879
+Ks 0.1 0.1 0.1
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Anime_Skin_009
+Ka 0 0 0
+Kd 0.456845 0.356184 0.188416
+Ks 0.1 0.1 0.1
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Anime_Skin_010
+Ka 0 0 0
+Kd 0.240344 0.171891 0.085185
+Ks 0.1 0.1 0.1
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Explorer_Default
+Ka 0.117647 0.117647 0.117647
+Kd 0.752941 0.752941 0.752941
+Ks 0.752941 0.752941 0.752941
+illum 2
+Ns 8
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl New_skin
+Ka 0 0 0
+Kd 0.566387 0.450888 0.410908
+Ks 0.214286 0.214286 0.214286
+illum 2
+Ns 17.6471
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Cloth_3_001
+Ka 0 0 0
+Kd 0.5 0.100687 0.01101
+Ks 0.5 0.5 0.5
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Bright_Color_005
+Ka 0 0 0
+Kd 0.745866 0.146163 0.108152
+Ks 0.478261 0.478261 0.478261
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Cloth_2_001
+Ka 0 0 0
+Kd 0.126652 0.126652 0.126652
+Ks 0.153968 0.153968 0.153968
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl White_003
+Ka 0 0 0
+Kd 0.192437 0.192437 0.192437
+Ks 0.5 0.5 0.5
+illum 2
+Ns 47.0588
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Cloth_2_004
+Ka 0 0 0
+Kd 0.126652 0.126652 0.126652
+Ks 0.153968 0.153968 0.153968
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Anime_Skin_001
+Ka 0 0 0
+Kd 0.045705 0.045705 0.045705
+Ks 0.1 0.1 0.1
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl White_002
+Ka 0 0 0
+Kd 0.4 0.4 0.4
+Ks 0.5 0.5 0.5
+illum 2
+Ns 47.0588
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl m_hAIR
+Ka 0 0 0
+Kd 0.570191 0.418331 0.127281
+Ks 0.478261 0.478261 0.478261
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Dark_black
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.5 0.5 0.5
+illum 2
+Ns 96.0784
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl New_skin_001
+Ka 0 0 0
+Kd 0.619018 0.467658 0.443933
+Ks 0.214286 0.214286 0.214286
+illum 2
+Ns 17.6471
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl eye_Mat
+Ka 0 0 0
+Kd 0.64 0.64 0.64
+Ks 0.5 0.5 0.5
+illum 2
+Ns 96.0784
+map_Kd C:\\Reference Pictures & Textures\\Textures\\Eye Texture\\Anime\\6 (3).bmp
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Darkness
+Ka 0 0 0
+Kd 0 0 0
+Ks 0 0 0
+illum 2
+Ns 47.0588
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 

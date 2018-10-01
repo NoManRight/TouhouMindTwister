@@ -1,0 +1,125 @@
+fileFormatVersion: 2
+guid: 5c362abd70bd29840b36385f58334959
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: BROOM_Cylinder
+    100002: //RootNode
+    100004: Kirisame_Marisa
+    100006: Left_Eye_003_Plane_023
+    100008: Right_Eye_002_Plane_022
+    400000: BROOM_Cylinder
+    400002: //RootNode
+    400004: Kirisame_Marisa
+    400006: Left_Eye_003_Plane_023
+    400008: Right_Eye_002_Plane_022
+    2100000: Anime_Skin_008
+    2100002: Anime_Skin_009
+    2100004: Anime_Skin_010
+    2100006: New_skin
+    2100008: Cloth_3_001
+    2100010: Bright_Color_005
+    2100012: Cloth_2_001
+    2100014: White_003
+    2100016: Cloth_2_004
+    2100018: Anime_Skin_001
+    2100020: White_002
+    2100022: m_hAIR
+    2100024: Dark_black
+    2100026: New_skin_001
+    2100028: eye_Mat
+    2300000: BROOM_Cylinder
+    2300002: Kirisame_Marisa
+    2300004: Left_Eye_003_Plane_023
+    2300006: Right_Eye_002_Plane_022
+    3300000: BROOM_Cylinder
+    3300002: Kirisame_Marisa
+    3300004: Left_Eye_003_Plane_023
+    3300006: Right_Eye_002_Plane_022
+    4300000: BROOM_Cylinder
+    4300002: Kirisame_Marisa
+    4300004: Left_Eye_003_Plane_023
+    4300006: Right_Eye_002_Plane_022
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

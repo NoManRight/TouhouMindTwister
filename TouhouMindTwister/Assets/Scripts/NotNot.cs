@@ -48,7 +48,7 @@ public class NotNot : MonoBehaviour
         {
             Cubes[i] = cubecontroller.transform.GetChild(i).gameObject;
         }
-        Monster = Cubes[2].transform.GetChild(6).gameObject;
+        Monster = Cubes[2].transform.GetChild(1).gameObject;
         txt_dir = transform.GetChild(1).GetChild(0).gameObject;
         txt_score = transform.GetChild(1).GetChild(1).gameObject;
         txt_clear = transform.GetChild(1).GetChild(2).gameObject;
