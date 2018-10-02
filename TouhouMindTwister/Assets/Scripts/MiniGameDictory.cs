@@ -16,8 +16,5 @@ public class CharString
 {
     [SerializeField]
     public char code;
-    public string meaning;
-    
-
-
+    public KeyCode meaning;
 }

@@ -13,16 +13,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dictory:
   - code: 33
-    meaning: NOT
+    meaning: 0
   - code: 48
-    meaning: UP
+    meaning: 119
   - code: 49
-    meaning: DOWN
+    meaning: 115
   - code: 50
-    meaning: LEFT
+    meaning: 97
   - code: 51
-    meaning: RIGHT
+    meaning: 100
   - code: 124
-    meaning: OR
+    meaning: 0
   - code: 38
-    meaning: AND
+    meaning: 0

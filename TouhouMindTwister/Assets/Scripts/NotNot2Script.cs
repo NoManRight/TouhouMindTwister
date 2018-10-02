@@ -20,7 +20,9 @@ public class NotNot2Script : MonoBehaviour
     Quaternion CubeRotation;
     public float timer, timerbeforestart, movetimer;
     public bool start, keyeventon, ismoving, regreted;
-    public int timesplayed, score, rannum;
+    public bool not, correct;
+    public int timesplayed, score, rannum, number, condition;
+    public string instruction;
     //public Direction answer, playeranswer;
     KeyCode kanswer;
 
@@ -48,6 +50,8 @@ public class NotNot2Script : MonoBehaviour
         keyeventon = false;
         ismoving = false;
         regreted = false;
+        not = false;
+        instruction = generate_instruction();
     }
 
     // Update is called once per frame
@@ -56,42 +60,138 @@ public class NotNot2Script : MonoBehaviour
 
     }
 
-    void generate_instruction()
+    string generate_instruction()
     {
-        string instruction = "";
+        instruction = "";
         int i = 0;
         int rannum = 0;
-        while (true)
+        while (i < 3)
         {
             // i = 0, randomize the first set of instructions
             // i = 1, randomize the conditions(and not)
             // if and/not is added, randomize the 3rd set of instruction
-            if (i == 0)
+            if (i == 0 || i == 2)
             {
                 rannum = Random.Range(0, 2);
                 if(rannum == 1)
                 {
-                    rannum = Random.Range(0, 2);
+                    rannum = Random.Range(1, 5);
+                    instruction += miniGameDictory.Dictory[rannum].code;
                     i++;
                 }
                 else
                 {
-                    instruction += miniGameDictory.Dictory[rannum];
+                    instruction += miniGameDictory.Dictory[rannum].code;
                 }
             }
-            if (i == 1)
+            else
             {
                 rannum = Random.Range(0, 2);
                 if (rannum == 0)
                 {
-                    break;
+                    i++;
+                    continue;
                 }
-                rannum = Random.Range(6, 8);
-                instruction += miniGameDictory.Dictory[rannum]; //either and/or
+                rannum = Random.Range(5, 7);
+                instruction += miniGameDictory.Dictory[rannum].code; //either and/or
                 continue;
             }
-            rannum = Random.Range(0, 5);
-            instruction += miniGameDictory.Dictory[rannum]; //!0123
         }
+        return instruction;
+    }
+
+    void determine(string instruction, KeyCode input)
+    {
+        if (Keycheck(input))
+        {
+            return;
+        }
+        correct = true;
+        condition = 0;
+        simplify(instruction);
+        for (int i = 0; i < instruction.Length; ++i)
+        {
+            if (instruction[i] == miniGameDictory.Dictory[6].code)
+            {
+                condition = 1;
+                break;
+            }
+            else if (instruction[i] == miniGameDictory.Dictory[5].code)
+            {
+                condition = 2;
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
+        for (int i = 0; i < instruction.Length; ++i)
+        {
+            if (instruction[i] == miniGameDictory.Dictory[0].code)
+            {
+                not = true;
+                continue;
+            }
+            else if (instruction[i] == miniGameDictory.Dictory[5].code || instruction[i] == miniGameDictory.Dictory[6].code)
+            {
+                continue;
+            }
+            foreach (CharString codes in miniGameDictory.Dictory)
+            {
+                if (codes.code == instruction[i])
+                {
+                    kanswer = codes.meaning;
+                    break;
+                }
+            }
+            if (kanswer == input)
+            {
+                if (not && condition != 2)
+                {
+                    correct = false;
+                    not = false;
+                    break;
+                }
+                else if (not)
+                {
+                    correct = false;
+                }
+                not = false;
+                continue;
+            }
+            else
+            {
+                if (!not && condition != 2)
+                {
+                    correct = false;
+                    not = false;
+                    break;
+                }
+                else if (!not)
+                {
+                    correct = false;
+                }
+                not = false;
+                continue;
+            }
+        }
+    }
+
+    string simplify(string instruction)
+    {
+        return instruction.Replace("!!",string.Empty); 
+    }
+
+    private bool Keycheck(KeyCode input)
+    {
+        if (input == (KeyCode)PlayerPrefs.GetInt("key_up") ||
+            input == (KeyCode)PlayerPrefs.GetInt("key_down") ||
+            input == (KeyCode)PlayerPrefs.GetInt("key_left") ||
+            input == (KeyCode)PlayerPrefs.GetInt("key_right"))
+        {
+            return true;
+        }
+        return false;
     }
 }
