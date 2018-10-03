@@ -18,8 +18,6 @@ public class NotNot : MonoBehaviour
         Direction_Total,
     }
 
-    public Dictionary<char, string> Map;
-
 
     GameObject cubecontroller;
     GameObject[] Cubes;
@@ -30,9 +28,10 @@ public class NotNot : MonoBehaviour
     GameObject txt_starttimer;
     GameObject Monster;
     GameObject Player;
+    GameObject SkillImage;
     Quaternion CubeRotation;
     public float timer, timerbeforestart, movetimer;
-    public bool start, keyeventon, ismoving, regreted;
+    public bool start, keyeventon, ismoving, regreted, score2;
     public int timesplayed, score, rannum;
     public Direction answer, playeranswer;
     KeyCode kanswer;
@@ -54,6 +53,7 @@ public class NotNot : MonoBehaviour
         txt_clear = transform.GetChild(1).GetChild(2).gameObject;
         scrollbar_gametimer = transform.GetChild(1).GetChild(3).gameObject;
         txt_starttimer = transform.GetChild(1).GetChild(4).gameObject;
+        SkillImage = transform.GetChild(1).GetChild(5).gameObject;
         timer = 0;
         timerbeforestart = 3;
         txt_starttimer.transform.GetComponent<Text>().text = ((int)timerbeforestart).ToString();
@@ -61,6 +61,7 @@ public class NotNot : MonoBehaviour
         keyeventon = false;
         ismoving = false;
         regreted = false;
+        score2 = false;
     }
 
     // Update is called once per frame
@@ -155,6 +156,7 @@ public class NotNot : MonoBehaviour
                         timesplayed++;
                         scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
                         scrollbar_gametimer.SetActive(false);
+                        SkillImage.SetActive(false);
                     }
                 }
                 if(ismoving && !regreted)
@@ -293,6 +295,19 @@ public class NotNot : MonoBehaviour
 
     private void OnGUI()
     {
+        if(Input.anyKeyDown && Event.current.type == EventType.KeyDown)
+        {
+            if (Event.current.keyCode == (KeyCode)PlayerPrefs.GetInt("key_skill"))
+            {
+                Debug.Log("skill used");
+                //GameController.instance.miniGameDictory.CharacteList[GameController.instance.PlayerCharacter].Data.GetComponent<Skill_Alice>().; will complete when alice skill is complete
+                if (GameController.instance.PlayerCharacter == 2 && !score2)
+                {                    
+                    score2 = true;
+                    SkillImage.SetActive(true);
+                }
+            }
+        }
         if (keyeventon)
         {
             if (!ismoving)
@@ -308,6 +323,11 @@ public class NotNot : MonoBehaviour
                             if (Event.current.keyCode == kanswer)
                             {
                                 // you got it right, next
+                                if(score2)
+                                {
+                                    score++;
+                                    score2 = false;
+                                }
                                 score++;
                                 // maybe add timer to score?
                                 txt_dir.GetComponent<Text>().text = "Correct";
@@ -324,6 +344,11 @@ public class NotNot : MonoBehaviour
                             if(Event.current.keyCode != kanswer)
                             {
                                 // you got it right, next
+                                if (score2)
+                                {
+                                    score++;
+                                    score2 = false;
+                                }
                                 score++;
                                 // maybe add timer to score?
                                 txt_dir.GetComponent<Text>().text = "Correct";
@@ -343,6 +368,7 @@ public class NotNot : MonoBehaviour
                         ismoving = true;
                         scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
                         scrollbar_gametimer.SetActive(false);
+                        SkillImage.SetActive(false);
                     }
                 }
             }

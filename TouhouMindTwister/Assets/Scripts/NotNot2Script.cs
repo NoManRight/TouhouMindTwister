@@ -52,6 +52,8 @@ public class NotNot2Script : MonoBehaviour
         regreted = false;
         not = false;
         instruction = generate_instruction();
+
+        
     }
 
     // Update is called once per frame

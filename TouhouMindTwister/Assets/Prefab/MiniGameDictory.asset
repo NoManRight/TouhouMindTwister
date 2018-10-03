@@ -26,3 +26,13 @@ MonoBehaviour:
     meaning: 0
   - code: 38
     meaning: 0
+  CharacteList:
+  - ID: 0
+    Name: Reimu
+    Data: {fileID: 0}
+  - ID: 1
+    Name: Marisa
+    Data: {fileID: 0}
+  - ID: 2
+    Name: Alice
+    Data: {fileID: 1883976400162082, guid: 7ce0c185d5d1b884299acca6be64e3f6, type: 2}

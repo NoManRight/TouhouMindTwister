@@ -5,8 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
     public static GameController instance;
+    public MiniGameDictory miniGameDictory;
     public string Levels;
     public Transform PlayerCamera;
+    public int PlayerCharacter;
     int Gamemode;
     int MiniGameChoosen;
 	// Use this for initialization
@@ -34,19 +36,23 @@ public class GameController : MonoBehaviour {
         }
         if (!PlayerPrefs.HasKey("key_up"))
         {
-            PlayerPrefs.SetInt("key_up", 119); // w
+            PlayerPrefs.SetInt("key_up", (int)KeyCode.W); // w
         }
         if (!PlayerPrefs.HasKey("key_down"))
         {
-            PlayerPrefs.SetInt("key_down", 115); // s
+            PlayerPrefs.SetInt("key_down", (int)KeyCode.S); // s
         }
         if (!PlayerPrefs.HasKey("key_left"))
         {
-            PlayerPrefs.SetInt("key_left", 97); // a
+            PlayerPrefs.SetInt("key_left", (int)KeyCode.A); // a
         }
         if (!PlayerPrefs.HasKey("key_right"))
         {
-            PlayerPrefs.SetInt("key_right", 100); // d
+            PlayerPrefs.SetInt("key_right", (int)KeyCode.D); // d
+        }
+        if (!PlayerPrefs.HasKey("key_skill"))
+        {
+            PlayerPrefs.SetInt("key_skill", (int)KeyCode.Alpha1);
         }
         if (!PlayerPrefs.HasKey("mute"))
         {
@@ -59,6 +65,8 @@ public class GameController : MonoBehaviour {
 
         //loads the value into the game
         LoadStartingData();
+
+        ChosenCharacter();
     }
 	
 	// Update is called once per frame
@@ -124,5 +132,12 @@ public class GameController : MonoBehaviour {
     public int GetMiniGame()
     {
         return MiniGameChoosen;
+    }
+
+    public void ChosenCharacter()
+    {
+        // takes in what player chose
+        // and saves into player character
+        PlayerCharacter = 2; //default for now
     }
 }
