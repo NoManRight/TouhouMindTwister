@@ -2542,7 +2542,7 @@ MonoBehaviour:
   score: 0
   rannum: 0
   instruction: 
-  speed: 0
+  speed: 1
 --- !u!4 &1166824881 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: fed4aa8888ad7d4499d4aec87eb8c638,

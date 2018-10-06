@@ -62,7 +62,6 @@ public class NotNot2Script : MonoBehaviour
         keyeventon = false;
         ismoving = false;
         score2 = false;
-        
     }
 
     // Update is called once per frame
@@ -289,24 +288,31 @@ public class NotNot2Script : MonoBehaviour
     bool determine(string instruction, KeyCode input)
     {
         string[] temp = instruction.Split(',');
-        bool[] each_results = new bool[0];
-        int operands = 0;
+        bool[] each_results = new bool[temp.Length-1];
+        string operands = temp[1];
+        if (!operands.Contains(miniGameDictory.Dictory[(int)MAP.OR].code.ToString()) && !operands.Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()))
+        {
+            temp = new string[1] { temp[0] };
+        }
+        else
+        {
+
+            temp[1] = temp[2];
+            temp = new string[2] { temp[0], temp[1] };
+        }
         for (int i = 0; i < temp.Length; ++i)
         {
-            if (temp[i].Contains(miniGameDictory.Dictory[(int)MAP.OR].code.ToString()) || temp[i].Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()))
-            {
-                operands = i;
-                continue;
-            }
             bool not = false;
             if (temp[i].Contains(miniGameDictory.Dictory[(int)MAP.NOT].code.ToString()))
             {
                 not = true;
                 temp[i].Substring(1);
             }
-            each_results[each_results.Length - 1] = (not ^ (temp[i] == ConvertUserInputString(input)));
+            Debug.Log(not ^ true);
+            each_results[i] = (not ^ (temp[i] == ConvertUserInputString(input)));
+            Debug.Log(each_results[i]);
         }
-        return process_operands(each_results, temp[operands]);
+        return process_operands(each_results, operands);
     }
 
     string simplify(string instructions)
@@ -357,6 +363,10 @@ public class NotNot2Script : MonoBehaviour
     string ReadableInstruction(string instructions)
     {
         string[] temp = instructions.Split(',');
+        if (!temp[1].Contains(miniGameDictory.Dictory[(int)MAP.OR].code.ToString()) && !temp[1].Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()))
+        {
+            temp = new string[1] { temp[0] };
+        }
         string Readable = "";
         foreach(string parts in temp)
         {
