@@ -7,6 +7,17 @@ public class NotNot2Script : MonoBehaviour
 {
 
     public MiniGameDictory miniGameDictory;
+    enum MAP
+    {
+        NOT = 0,
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+        OR,
+        AND,
+    }
+
 
     GameObject cubecontroller;
     GameObject[] Cubes;
@@ -17,14 +28,14 @@ public class NotNot2Script : MonoBehaviour
     GameObject txt_starttimer;
     GameObject Monster;
     GameObject Player;
-    Quaternion CubeRotation;
+    GameObject SkillImage;
     public float timer, timerbeforestart, movetimer;
-    public bool start, keyeventon, ismoving, regreted;
-    public bool not, correct;
-    public int timesplayed, score, rannum, number, condition;
+    public bool start, keyeventon, ismoving;
+    public bool score2;
+    public int timesplayed, score, rannum;
     public string instruction;
     //public Direction answer, playeranswer;
-    KeyCode kanswer;
+    MAP kanswer;
 
     public float speed = 0;
 
@@ -43,23 +54,191 @@ public class NotNot2Script : MonoBehaviour
         txt_clear = transform.GetChild(1).GetChild(2).gameObject;
         scrollbar_gametimer = transform.GetChild(1).GetChild(3).gameObject;
         txt_starttimer = transform.GetChild(1).GetChild(4).gameObject;
+        SkillImage = transform.GetChild(1).GetChild(5).gameObject;
         timer = 0;
         timerbeforestart = 3;
         txt_starttimer.transform.GetComponent<Text>().text = ((int)timerbeforestart).ToString();
         start = true;
         keyeventon = false;
         ismoving = false;
-        regreted = false;
-        not = false;
-        instruction = generate_instruction();
-
+        score2 = false;
         
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+        if (timerbeforestart > 0)
+        {
+            timerbeforestart -= Time.deltaTime;
+            txt_starttimer.transform.GetComponent<Text>().text = ((int)timerbeforestart).ToString();
+            //update text on screen
+        }
+        else
+        {
+            if (txt_starttimer.activeSelf)
+            {
+                txt_starttimer.SetActive(false);
+            }
+            if (start)
+            {
+                instruction = generate_instruction();
+                simplify(instruction);
+                Debug.Log(instruction);
+                txt_dir.GetComponent<Text>().text = ReadableInstruction(instruction);
+                timer = 7;
+                scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
+                scrollbar_gametimer.transform.GetChild(1).GetComponent<Text>().text = ((int)timer).ToString();
+                scrollbar_gametimer.SetActive(true);
+                keyeventon = true;
+                start = false;
+            }
+            else
+            {
+                // need to do a backtrack
+                if (keyeventon)
+                {
+                    timer -= Time.deltaTime;
+                    scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = timer / 7;
+                    scrollbar_gametimer.transform.GetChild(1).GetComponent<Text>().text = ((int)timer).ToString();
+                    if (timer <= 0)
+                    {
+                        txt_dir.GetComponent<Text>().text = "Missed";
+                        keyeventon = false;
+                        start = true;
+                        timerbeforestart = 3;
+                        txt_starttimer.SetActive(true);
+                        timesplayed++;
+                        scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
+                        scrollbar_gametimer.SetActive(false);
+                        SkillImage.SetActive(false);
+                    }
+                }
+                if(ismoving)
+                {
+                    if (movetimer < 12)
+                    {
+                        if (kanswer == MAP.UP)
+                        {
+                            Moveupdown(false);
+                        }
+                        else if (kanswer == MAP.DOWN)
+                        {
+                            Moveupdown(true);
+                        }
+                        else if (kanswer == MAP.LEFT)
+                        {
+                            Moveleftright(true);
+                        }
+                        else if (kanswer == MAP.RIGHT)
+                        {
+                            Moveleftright(false);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Missing move Direction");
+                            return;
+                        }
+                        movetimer += Time.deltaTime * speed;
+                    }
+                    else
+                    {
+                        if (kanswer == MAP.UP)
+                        {
+                            GameObject temp = Cubes[4];
+                            Cubes[4] = Cubes[2];
+                            Cubes[2] = Cubes[0];
+                            Cubes[0] = temp;
+                        }
+                        else if (kanswer == MAP.DOWN)
+                        {
+                            GameObject temp = Cubes[0];
+                            Cubes[0] = Cubes[2];
+                            Cubes[2] = Cubes[4];
+                            Cubes[4] = temp;
+                        }
+                        else if (kanswer == MAP.LEFT)
+                        {
+                            GameObject temp = Cubes[3];
+                            Cubes[3] = Cubes[2];
+                            Cubes[2] = Cubes[1];
+                            Cubes[1] = temp;
+                        }
+                        else if (kanswer == MAP.RIGHT)
+                        {
+                            GameObject temp = Cubes[1];
+                            Cubes[1] = Cubes[2];
+                            Cubes[2] = Cubes[3];
+                            Cubes[3] = temp;
+                        }
+                        Reset();
+                        start = true;
+                        movetimer = 0;
+                        ismoving = false;
+                    }
+                }
+            }
+        }
+        txt_score.transform.GetComponent<Text>().text = "Score: " + score.ToString();
+        txt_clear.transform.GetComponent<Text>().text = "Round: " + timesplayed.ToString();
+    }
 
+    private void OnGUI()
+    {
+        if (Input.anyKeyDown && Event.current.type == EventType.KeyDown)
+        {
+            if (Event.current.keyCode == (KeyCode)PlayerPrefs.GetInt("key_skill"))
+            {
+                Debug.Log("skill used");
+                //GameController.instance.miniGameDictory.CharacteList[GameController.instance.PlayerCharacter].Data.GetComponent<Skill_Alice>().; will complete when alice skill is complete
+                if (GameController.instance.PlayerCharacter == 2 && !score2)
+                {
+                    score2 = true;
+                    SkillImage.SetActive(true);
+                }
+            }
+        }
+        if (keyeventon)
+        {
+            if (Input.anyKeyDown && Event.current.type == EventType.KeyDown)
+            {
+                if (Keycheck(Event.current.keyCode))
+                {
+                    // and changing this too
+                    Debug.Log(Event.current.keyCode);
+                    if (determine(instruction, Event.current.keyCode))
+                    {
+                        if (score2)
+                        {
+                            score++;
+                            score2 = false;
+                        }
+                        score++;
+                        // maybe add timer to score?
+                        txt_dir.GetComponent<Text>().text = "Correct";
+                    }
+                    else
+                    {
+                        // you gt it wrong, next
+                        txt_dir.GetComponent<Text>().text = "Wrong";
+                        SpawnGameOverMonster(Event.current.keyCode);
+                    }
+                    
+                    Playerchoosendirection(Event.current.keyCode);
+                    timesplayed++;
+                    keyeventon = false;
+                    ismoving = true;
+                    scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
+                    scrollbar_gametimer.SetActive(false);
+                    SkillImage.SetActive(false);
+                    if(score2)
+                    {
+                        score2 = false;
+                    }
+                }
+            }
+        }
     }
 
     string generate_instruction()
@@ -78,12 +257,14 @@ public class NotNot2Script : MonoBehaviour
                 if(rannum == 1)
                 {
                     rannum = Random.Range(1, 5);
-                    instruction += miniGameDictory.Dictory[rannum].code;
+                    instruction += miniGameDictory.Dictory[rannum].code.ToString() + ",";
+                    Debug.Log(instruction);
                     i++;
                 }
                 else
                 {
-                    instruction += miniGameDictory.Dictory[rannum].code;
+                    instruction += miniGameDictory.Dictory[(int)MAP.NOT].code.ToString();
+                    Debug.Log(instruction);
                 }
             }
             else
@@ -95,94 +276,119 @@ public class NotNot2Script : MonoBehaviour
                     continue;
                 }
                 rannum = Random.Range(5, 7);
-                instruction += miniGameDictory.Dictory[rannum].code; //either and/or
+                instruction += miniGameDictory.Dictory[rannum].code.ToString() + ","; //either and/or
+                i++;
+                Debug.Log(instruction);
                 continue;
             }
         }
+        Debug.Log(instruction);
         return instruction;
     }
 
-    void determine(string instruction, KeyCode input)
+    bool determine(string instruction, KeyCode input)
     {
-        if (Keycheck(input))
+        string[] temp = instruction.Split(',');
+        bool[] each_results = new bool[0];
+        int operands = 0;
+        for (int i = 0; i < temp.Length; ++i)
         {
-            return;
-        }
-        correct = true;
-        condition = 0;
-        simplify(instruction);
-        for (int i = 0; i < instruction.Length; ++i)
-        {
-            if (instruction[i] == miniGameDictory.Dictory[6].code)
+            if (temp[i].Contains(miniGameDictory.Dictory[(int)MAP.OR].code.ToString()) || temp[i].Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()))
             {
-                condition = 1;
-                break;
-            }
-            else if (instruction[i] == miniGameDictory.Dictory[5].code)
-            {
-                condition = 2;
-                break;
-            }
-            else
-            {
+                operands = i;
                 continue;
             }
-        }
-        for (int i = 0; i < instruction.Length; ++i)
-        {
-            if (instruction[i] == miniGameDictory.Dictory[0].code)
+            bool not = false;
+            if (temp[i].Contains(miniGameDictory.Dictory[(int)MAP.NOT].code.ToString()))
             {
                 not = true;
-                continue;
+                temp[i].Substring(1);
             }
-            else if (instruction[i] == miniGameDictory.Dictory[5].code || instruction[i] == miniGameDictory.Dictory[6].code)
-            {
-                continue;
-            }
-            foreach (CharString codes in miniGameDictory.Dictory)
-            {
-                if (codes.code == instruction[i])
-                {
-                    kanswer = codes.meaning;
-                    break;
-                }
-            }
-            if (kanswer == input)
-            {
-                if (not && condition != 2)
-                {
-                    correct = false;
-                    not = false;
-                    break;
-                }
-                else if (not)
-                {
-                    correct = false;
-                }
-                not = false;
-                continue;
-            }
-            else
-            {
-                if (!not && condition != 2)
-                {
-                    correct = false;
-                    not = false;
-                    break;
-                }
-                else if (!not)
-                {
-                    correct = false;
-                }
-                not = false;
-                continue;
-            }
+            each_results[each_results.Length - 1] = (not ^ (temp[i] == ConvertUserInputString(input)));
         }
+        return process_operands(each_results, temp[operands]);
     }
 
-    string simplify(string instruction)
+    string simplify(string instructions)
     {
-        return instruction.Replace("!!",string.Empty); 
+        instruction = instructions.Replace("!!", string.Empty);
+        Debug.Log(instruction);
+        return instruction;
+    }
+
+    bool process_operands(bool[] result, string operands)
+    {
+        bool Result = result[0];
+        foreach (bool compare in result)
+        {
+            if (operands.Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()) && compare == false)
+            {
+                Result = false;
+            }
+            else if (compare == true)
+            {
+                Result = true;
+            }
+        }
+        return Result;
+    }
+
+    string ConvertUserInputString(KeyCode input)
+    {
+        if (input == (KeyCode)PlayerPrefs.GetInt("key_up"))
+        {
+            return "0";
+        }
+        else if (input == (KeyCode)PlayerPrefs.GetInt("key_down"))
+        {
+            return "1";
+        }
+        else if (input == (KeyCode)PlayerPrefs.GetInt("key_left"))
+        {
+            return "2";
+        }
+        else if (input == (KeyCode)PlayerPrefs.GetInt("key_right"))
+        {
+            return "3";
+        }
+        return null;
+    }
+
+    string ReadableInstruction(string instructions)
+    {
+        string[] temp = instructions.Split(',');
+        string Readable = "";
+        foreach(string parts in temp)
+        {
+            for(int i = 0; i < parts.Length; ++i)
+            {
+                switch (parts[i])
+                {
+                    case '!':
+                        Readable += "Not ";
+                        break;
+                    case '0':
+                        Readable += "Up ";
+                        break;
+                    case '1':
+                        Readable += "Down ";
+                        break;
+                    case '2':
+                        Readable += "Left ";
+                        break;
+                    case '3':
+                        Readable += "Right ";
+                        break;
+                    case '|':
+                        Readable += "Or ";
+                        break;
+                    case '&':
+                        Readable += "And ";
+                        break;
+                }
+            }
+        }
+        return Readable.Trim();
     }
 
     private bool Keycheck(KeyCode input)
@@ -195,5 +401,112 @@ public class NotNot2Script : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void Playerchoosendirection(KeyCode input)
+    {
+        if (input == (KeyCode)PlayerPrefs.GetInt("key_up"))
+        {
+            kanswer = MAP.UP;
+        }
+        else if (input == (KeyCode)PlayerPrefs.GetInt("key_down"))
+        {
+            kanswer = MAP.DOWN;
+        }
+        else if (input == (KeyCode)PlayerPrefs.GetInt("key_left"))
+        {
+            kanswer = MAP.LEFT;
+        }
+        else if (input == (KeyCode)PlayerPrefs.GetInt("key_right"))
+        {
+            kanswer = MAP.RIGHT;
+        }
+    }
+
+    private void SpawnGameOverMonster(KeyCode Direction)
+    {
+        if (Direction == (KeyCode)PlayerPrefs.GetInt("key_up"))
+        {
+
+            Monster.transform.SetParent(Cubes[0].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, 0, -0.25f);
+            Monster.transform.Rotate(new Vector3(0, 180, 0));
+        }
+        else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_down"))
+        {
+            Monster.transform.SetParent(Cubes[4].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, 0, 0.25f);
+        }
+        else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_left"))
+        {
+            Monster.transform.SetParent(Cubes[1].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, 0.25f, 0);
+            Monster.transform.Rotate(new Vector3(0, 90, 0));
+        }
+        else if (Direction == (KeyCode)PlayerPrefs.GetInt("key_right"))
+        {
+            Monster.transform.SetParent(Cubes[3].transform);
+            Monster.transform.localPosition = new Vector3(-0.5f, -0.25f, 0);
+            Monster.transform.Rotate(new Vector3(0, -90, 0));
+        }
+        Monster.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        Monster.SetActive(true);
+    }
+
+    private void Moveupdown(bool input)
+    {
+        if (input)
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i % 2 == 0)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x, Cubes[i].transform.localPosition.y + (speed * Time.deltaTime), Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i % 2 == 0)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x, Cubes[i].transform.localPosition.y - (speed * Time.deltaTime), Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+    }
+
+    private void Moveleftright(bool input)
+    {
+        if (input)
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i == 1 || i == 2 || i == 3)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x + (speed * Time.deltaTime), Cubes[i].transform.localPosition.y, Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Cubes.Length; ++i)
+            {
+                if (i == 1 || i == 2 || i == 3)
+                {
+                    Cubes[i].transform.localPosition = new Vector3(Cubes[i].transform.localPosition.x - (speed * Time.deltaTime), Cubes[i].transform.localPosition.y, Cubes[i].transform.localPosition.z);
+                }
+            }
+        }
+    }
+
+    private void Reset()
+    {
+        Cubes[0].transform.localPosition = new Vector3(0, 12, 0);
+        Cubes[1].transform.localPosition = new Vector3(-12, 0, 0);
+        Cubes[2].transform.localPosition = new Vector3(0, 0, 0);
+        Cubes[3].transform.localPosition = new Vector3(12, 0, 0);
+        Cubes[4].transform.localPosition = new Vector3(0, -12, 0);
     }
 }
