@@ -32,6 +32,7 @@ public class NotNot2Script : MonoBehaviour
     public float timer, timerbeforestart, movetimer;
     public bool start, keyeventon, ismoving;
     public bool score2, gameisover;
+    public bool[] each_results;
     public int timesplayed, score, rannum;
     public string instruction;
     //public Direction answer, playeranswer;
@@ -85,7 +86,8 @@ public class NotNot2Script : MonoBehaviour
                 {
                     instruction = generate_instruction();
                     simplify(instruction);
-                    Debug.Log(instruction);
+                    ThrowAwayInstructions(instruction);
+                    //Debug.Log(instruction);
                     txt_dir.GetComponent<Text>().text = ReadableInstruction(instruction);
                     timer = 7;
                     scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
@@ -140,7 +142,7 @@ public class NotNot2Script : MonoBehaviour
                             }
                             else
                             {
-                                Debug.LogWarning("Missing move Direction");
+                                //Debug.LogWarning("Missing move Direction");
                                 return;
                             }
                             movetimer += Time.deltaTime * speed;
@@ -205,7 +207,7 @@ public class NotNot2Script : MonoBehaviour
         {
             if (Event.current.keyCode == (KeyCode)PlayerPrefs.GetInt("key_skill"))
             {
-                Debug.Log("skill used");
+                //Debug.Log("skill used");
                 //GameController.instance.miniGameDictory.CharacteList[GameController.instance.PlayerCharacter].Data.GetComponent<Skill_Alice>().; will complete when alice skill is complete
                 if (GameController.instance.PlayerCharacter == 2 && !score2)
                 {
@@ -221,7 +223,7 @@ public class NotNot2Script : MonoBehaviour
                 if (Keycheck(Event.current.keyCode))
                 {
                     // and changing this too
-                    Debug.Log(Event.current.keyCode);
+                    //Debug.Log(Event.current.keyCode);
                     if (determine(instruction, Event.current.keyCode))
                     {
                         if (score2)
@@ -236,8 +238,11 @@ public class NotNot2Script : MonoBehaviour
                     else
                     {
                         // you gt it wrong, next
-                        txt_dir.GetComponent<Text>().text = "Wrong";
-                        SpawnGameOverMonster(Event.current.keyCode);
+                        //txt_dir.GetComponent<Text>().text = "Wrong";
+                        //SpawnGameOverMonster(Event.current.keyCode);
+                        txt_dir.GetComponent<Text>().text = "Game Over";
+                        gameisover = true;
+                        timer = 5;
                     }
                     
                     Playerchoosendirection(Event.current.keyCode);
@@ -273,13 +278,13 @@ public class NotNot2Script : MonoBehaviour
                 {
                     rannum = Random.Range(1, 5);
                     instruction += miniGameDictory.Dictory[rannum].code.ToString() + ",";
-                    Debug.Log(instruction);
+                    //Debug.Log(instruction);
                     i++;
                 }
                 else
                 {
                     instruction += miniGameDictory.Dictory[(int)MAP.NOT].code.ToString();
-                    Debug.Log(instruction);
+                    //Debug.Log(instruction);
                 }
             }
             else
@@ -293,18 +298,18 @@ public class NotNot2Script : MonoBehaviour
                 rannum = Random.Range(5, 7);
                 instruction += miniGameDictory.Dictory[rannum].code.ToString() + ","; //either and/or
                 i++;
-                Debug.Log(instruction);
+                //Debug.Log(instruction);
                 continue;
             }
         }
-        Debug.Log(instruction);
+        //Debug.Log(instruction);
         return instruction;
     }
 
     bool determine(string instruction, KeyCode input)
     {
         string[] temp = instruction.Split(',');
-        bool[] each_results = new bool[temp.Length-1];
+        each_results = new bool[temp.Length-1];
         string operands = temp[1];
         if (!operands.Contains(miniGameDictory.Dictory[(int)MAP.OR].code.ToString()) && !operands.Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()))
         {
@@ -322,11 +327,12 @@ public class NotNot2Script : MonoBehaviour
             if (temp[i].Contains(miniGameDictory.Dictory[(int)MAP.NOT].code.ToString()))
             {
                 not = true;
-                temp[i].Substring(1);
+                temp[i] = temp[i].Substring(1);
             }
-            Debug.Log(not ^ true);
+            //Debug.Log(not ^ true);
+            //Debug.Log(temp[i] + " " + ConvertUserInputString(input)+ " "+ not);
             each_results[i] = (not ^ (temp[i] == ConvertUserInputString(input)));
-            Debug.Log(each_results[i]);
+            //Debug.Log(each_results[i]);
         }
         return process_operands(each_results, operands);
     }
@@ -340,17 +346,27 @@ public class NotNot2Script : MonoBehaviour
 
     bool process_operands(bool[] result, string operands)
     {
-        bool Result = result[0];
+        int counter = 0;
+        bool Result = each_results[0];
         foreach (bool compare in result)
         {
+            if (counter == 2)
+            {
+                break;
+            }
             if (operands.Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString()) && compare == false)
             {
                 Result = false;
+                
             }
             else if (compare == true)
             {
-                Result = true;
+                if ((Result == true && operands.Contains(miniGameDictory.Dictory[(int)MAP.AND].code.ToString())) || operands.Contains(miniGameDictory.Dictory[(int)MAP.OR].code.ToString()))
+                {
+                    Result = true;
+                }
             }
+            counter++;
         }
         return Result;
     }
@@ -374,6 +390,19 @@ public class NotNot2Script : MonoBehaviour
             return "3";
         }
         return null;
+    }
+
+    void ThrowAwayInstructions(string instructions)
+    {
+        string[] temp = instruction.Split(',');
+        if (temp[0].Contains(temp[2]) || temp[2].Contains(temp[0])) //condition 1: where both condition 1 and 2 is same/!same
+        {
+            instruction = temp[0] + "," + temp[2] + ",";
+        }
+        else if (!temp[0].Contains(miniGameDictory.Dictory[(int)MAP.NOT].code.ToString()) && !temp[2].Contains(miniGameDictory.Dictory[(int)MAP.NOT].code.ToString()))
+        {
+            instruction = temp[0] + "," + temp[2] + ",";
+        }
     }
 
     string ReadableInstruction(string instructions)

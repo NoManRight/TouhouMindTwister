@@ -2538,11 +2538,12 @@ MonoBehaviour:
   keyeventon: 0
   ismoving: 0
   score2: 0
+  gameisover: 0
   timesplayed: 0
   score: 0
   rannum: 0
   instruction: 
-  speed: 1
+  speed: 3
 --- !u!4 &1166824881 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: fed4aa8888ad7d4499d4aec87eb8c638,
