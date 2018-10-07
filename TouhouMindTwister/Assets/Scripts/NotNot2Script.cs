@@ -31,7 +31,7 @@ public class NotNot2Script : MonoBehaviour
     GameObject SkillImage;
     public float timer, timerbeforestart, movetimer;
     public bool start, keyeventon, ismoving;
-    public bool score2;
+    public bool score2, gameisover;
     public int timesplayed, score, rannum;
     public string instruction;
     //public Direction answer, playeranswer;
@@ -67,7 +67,6 @@ public class NotNot2Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if (timerbeforestart > 0)
         {
             timerbeforestart -= Time.deltaTime;
@@ -76,111 +75,128 @@ public class NotNot2Script : MonoBehaviour
         }
         else
         {
-            if (txt_starttimer.activeSelf)
+            if (!gameisover)
             {
-                txt_starttimer.SetActive(false);
-            }
-            if (start)
-            {
-                instruction = generate_instruction();
-                simplify(instruction);
-                Debug.Log(instruction);
-                txt_dir.GetComponent<Text>().text = ReadableInstruction(instruction);
-                timer = 7;
-                scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
-                scrollbar_gametimer.transform.GetChild(1).GetComponent<Text>().text = ((int)timer).ToString();
-                scrollbar_gametimer.SetActive(true);
-                keyeventon = true;
-                start = false;
-            }
-            else
-            {
-                // need to do a backtrack
-                if (keyeventon)
+                if (txt_starttimer.activeSelf)
                 {
-                    timer -= Time.deltaTime;
-                    scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = timer / 7;
-                    scrollbar_gametimer.transform.GetChild(1).GetComponent<Text>().text = ((int)timer).ToString();
-                    if (timer <= 0)
-                    {
-                        txt_dir.GetComponent<Text>().text = "Missed";
-                        keyeventon = false;
-                        start = true;
-                        timerbeforestart = 3;
-                        txt_starttimer.SetActive(true);
-                        timesplayed++;
-                        scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
-                        scrollbar_gametimer.SetActive(false);
-                        SkillImage.SetActive(false);
-                    }
+                    txt_starttimer.SetActive(false);
                 }
-                if(ismoving)
+                if (start)
                 {
-                    if (movetimer < 12)
+                    instruction = generate_instruction();
+                    simplify(instruction);
+                    Debug.Log(instruction);
+                    txt_dir.GetComponent<Text>().text = ReadableInstruction(instruction);
+                    timer = 7;
+                    scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
+                    scrollbar_gametimer.transform.GetChild(1).GetComponent<Text>().text = ((int)timer).ToString();
+                    scrollbar_gametimer.SetActive(true);
+                    keyeventon = true;
+                    start = false;
+                }
+                else
+                {
+                    // need to do a backtrack
+                    if (keyeventon)
                     {
-                        if (kanswer == MAP.UP)
+                        timer -= Time.deltaTime;
+                        scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = timer / 7;
+                        scrollbar_gametimer.transform.GetChild(1).GetComponent<Text>().text = ((int)timer).ToString();
+                        if (timer <= 0)
                         {
-                            Moveupdown(false);
+                            txt_dir.GetComponent<Text>().text = "Game Over";
+                            gameisover = true;
+                            timer = 5;
+
+                            //keyeventon = false;
+                            //start = true;
+                            //timerbeforestart = 3;
+                            //txt_starttimer.SetActive(true);
+                            //timesplayed++;
+                            //scrollbar_gametimer.transform.GetComponent<Scrollbar>().value = 1.0f;
+                            //scrollbar_gametimer.SetActive(false);
+                            //SkillImage.SetActive(false);
                         }
-                        else if (kanswer == MAP.DOWN)
+                    }
+                    if (ismoving)
+                    {
+                        if (movetimer < 12)
                         {
-                            Moveupdown(true);
-                        }
-                        else if (kanswer == MAP.LEFT)
-                        {
-                            Moveleftright(true);
-                        }
-                        else if (kanswer == MAP.RIGHT)
-                        {
-                            Moveleftright(false);
+                            if (kanswer == MAP.UP)
+                            {
+                                Moveupdown(false);
+                            }
+                            else if (kanswer == MAP.DOWN)
+                            {
+                                Moveupdown(true);
+                            }
+                            else if (kanswer == MAP.LEFT)
+                            {
+                                Moveleftright(true);
+                            }
+                            else if (kanswer == MAP.RIGHT)
+                            {
+                                Moveleftright(false);
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Missing move Direction");
+                                return;
+                            }
+                            movetimer += Time.deltaTime * speed;
                         }
                         else
                         {
-                            Debug.LogWarning("Missing move Direction");
-                            return;
+                            if (kanswer == MAP.UP)
+                            {
+                                GameObject temp = Cubes[4];
+                                Cubes[4] = Cubes[2];
+                                Cubes[2] = Cubes[0];
+                                Cubes[0] = temp;
+                            }
+                            else if (kanswer == MAP.DOWN)
+                            {
+                                GameObject temp = Cubes[0];
+                                Cubes[0] = Cubes[2];
+                                Cubes[2] = Cubes[4];
+                                Cubes[4] = temp;
+                            }
+                            else if (kanswer == MAP.LEFT)
+                            {
+                                GameObject temp = Cubes[3];
+                                Cubes[3] = Cubes[2];
+                                Cubes[2] = Cubes[1];
+                                Cubes[1] = temp;
+                            }
+                            else if (kanswer == MAP.RIGHT)
+                            {
+                                GameObject temp = Cubes[1];
+                                Cubes[1] = Cubes[2];
+                                Cubes[2] = Cubes[3];
+                                Cubes[3] = temp;
+                            }
+                            Reset();
+                            start = true;
+                            movetimer = 0;
+                            ismoving = false;
                         }
-                        movetimer += Time.deltaTime * speed;
-                    }
-                    else
-                    {
-                        if (kanswer == MAP.UP)
-                        {
-                            GameObject temp = Cubes[4];
-                            Cubes[4] = Cubes[2];
-                            Cubes[2] = Cubes[0];
-                            Cubes[0] = temp;
-                        }
-                        else if (kanswer == MAP.DOWN)
-                        {
-                            GameObject temp = Cubes[0];
-                            Cubes[0] = Cubes[2];
-                            Cubes[2] = Cubes[4];
-                            Cubes[4] = temp;
-                        }
-                        else if (kanswer == MAP.LEFT)
-                        {
-                            GameObject temp = Cubes[3];
-                            Cubes[3] = Cubes[2];
-                            Cubes[2] = Cubes[1];
-                            Cubes[1] = temp;
-                        }
-                        else if (kanswer == MAP.RIGHT)
-                        {
-                            GameObject temp = Cubes[1];
-                            Cubes[1] = Cubes[2];
-                            Cubes[2] = Cubes[3];
-                            Cubes[3] = temp;
-                        }
-                        Reset();
-                        start = true;
-                        movetimer = 0;
-                        ismoving = false;
                     }
                 }
             }
+            else
+            {
+                if(timer > 0)
+                {
+                    timer -= Time.deltaTime;
+                }
+                else
+                {
+                    GameOver();
+                }
+            }
+            txt_score.transform.GetComponent<Text>().text = "Score: " + score.ToString();
+            txt_clear.transform.GetComponent<Text>().text = "Round: " + timesplayed.ToString();
         }
-        txt_score.transform.GetComponent<Text>().text = "Score: " + score.ToString();
-        txt_clear.transform.GetComponent<Text>().text = "Round: " + timesplayed.ToString();
     }
 
     private void OnGUI()
@@ -518,5 +534,10 @@ public class NotNot2Script : MonoBehaviour
         Cubes[2].transform.localPosition = new Vector3(0, 0, 0);
         Cubes[3].transform.localPosition = new Vector3(12, 0, 0);
         Cubes[4].transform.localPosition = new Vector3(0, -12, 0);
+    }
+
+    private void GameOver()
+    {
+        GameController.instance.ChangeScene(0);//main menu
     }
 }

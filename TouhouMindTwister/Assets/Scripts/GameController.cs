@@ -140,4 +140,9 @@ public class GameController : MonoBehaviour {
         // and saves into player character
         PlayerCharacter = 2; //default for now
     }
+
+    public void ChangeScene(int scenenum)
+    {
+        SceneManager.LoadScene(scenenum);
+    }
 }

@@ -49,7 +49,7 @@ public class StartGameScript : MonoBehaviour {
     {
         GameController.instance.SetGameMode(1);
         int rannum = Random.Range(0, GameController.instance.Levels.Length);
-        SceneManager.LoadScene(rannum + 1);
+        GameController.instance.ChangeScene(rannum + 1);
         //random minigame here
     }
 
