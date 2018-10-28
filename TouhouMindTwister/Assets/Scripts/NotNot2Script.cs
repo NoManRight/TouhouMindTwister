@@ -203,6 +203,8 @@ public class NotNot2Script : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!gameisover)
+        {
         if (Input.anyKeyDown && Event.current.type == EventType.KeyDown)
         {
             if (Event.current.keyCode == (KeyCode)PlayerPrefs.GetInt("key_skill"))
@@ -258,6 +260,8 @@ public class NotNot2Script : MonoBehaviour
                     }
                 }
             }
+            }
+
         }
     }
 
